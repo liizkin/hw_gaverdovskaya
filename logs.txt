@@ -10,11 +10,11 @@ You must do this in the eda\_analysis file with a py or ipynb extension (first, 
 4. Create boxplots of key features (ram, battery\_power, px\_height) broken down by price\_range (output/boxplots.png).
 5. Provide a textual summary: which 5 features are most strongly associated with the price segment, and why.
 
-**Constraints.** Write comments and the report in English. Use only pandas, numpy, matplotlib and seaborn — no plotly, no interactive backends, no plt.show(). Every figure must be exactly size (12, 😍 at dpi=120, saved with `plt.tight_layout()` and `bbox_inches="tight"`, and must not exceed 2 MB. Set random\_state=42 everywhere it applies. The final report.md must be with exactly five bullet points for the top features, one sentence of business reasoning each.
+**Constraints.** Write comments and the report in English. Use only pandas, numpy, matplotlib and seaborn — no plotly, no interactive backends, no plt.show(). Every figure must be exactly size (12, at dpi=120, saved with `plt.tight_layout()` and `bbox_inches="tight"`, and must not exceed 2 MB. Set random\_state=42 everywhere it applies. The final report.md must be with exactly five bullet points for the top features, one sentence of business reasoning each.
 
 **Always suspect the data before trusting it.** Explicitly check and report in eda\_summary.json: is price\_range balanced (expected roughly 500 per class)? Do px\_height or px\_width contain zeros — count them and flag as suspicious, since a real phone cannot have zero resolution? Are fc, pc and clock\_speed truly continuous, or are they discrete with half-steps like 0.5 and 1.5? Is any feature constant across all rows (zero variance, therefore useless)? Report every anomaly found in report.md as a separate short paragraph.
 
-GitHub Copilot: I’ll inspect the CSV and the required Python workflow first, then build a reproducible analysis that writes the charts, JSON checks, and five-point report into the workspace. I’m interpreting the malformed figure-size text “(12, 😍” as `(12, 8)`; I’ll keep that assumption explicit while validating the outputs.
+GitHub Copilot: I’ll inspect the CSV and the required Python workflow first, then build a reproducible analysis that writes the charts, JSON checks, and five-point report into the workspace. I’m interpreting the malformed figure-size text “(12, ” as `(12, 8)`; I’ll keep that assumption explicit while validating the outputs.
 
 Read memory
 
