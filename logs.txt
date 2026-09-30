@@ -1,0 +1,130 @@
+User: Imagine you are a professional data analyst. You have a file with data on mobile phone pricing. Here are all the signs in the train.csv file: battery\_power — total battery capacity in milliampere-hours; blue — Bluetooth; clock\_speed — microprocessor clock speed; dual\_sim — dual SIM card support; fc - number of megapixels of the front camera; four\_g — 4G; int\_memory — internal memory in gigabytes; m\_dep is the depth of the mobile phone in centimeters; mobile\_wt is the weight of the mobile phone; n\_cores is the number of processor cores; pc is the number of megapixels of the main camera; px\_height is the resolution height in pixels; px\_width is the resolution width in pixels; ram is the amount of RAM in megabytes; sc\_h is the height of the mobile phone screen in centimeters; sc\_w is the width mobile phone screen in centimeters; talk\_time — maximum talk time on a single battery charge; three\_g — 3G availability; touch\_screen — touchscreen availability; wifi — Wi-Fi availability; price\_range — target variable with values 0 (low cost), 1 (average cost), 2 (high cost) and 3 (very high cost).
+
+You need to identify whether there is a relationship between the phone’s features and its price. To do this, you need to conduct exploratory data analysis.
+
+You must do this in the eda\_analysis file with a py or ipynb extension (first, create an output folder for the output data):
+
+1. Output shape, dtypes, missing values, and duplicates.
+2. For each feature, use describe() and show the distribution by price\_range classes.
+3. Create a heatmap of correlations (save it to output/corr.png).
+4. Create boxplots of key features (ram, battery\_power, px\_height) broken down by price\_range (output/boxplots.png).
+5. Provide a textual summary: which 5 features are most strongly associated with the price segment, and why.
+
+**Constraints.** Write comments and the report in English. Use only pandas, numpy, matplotlib and seaborn — no plotly, no interactive backends, no plt.show(). Every figure must be exactly size (12, 😍 at dpi=120, saved with `plt.tight_layout()` and `bbox_inches="tight"`, and must not exceed 2 MB. Set random\_state=42 everywhere it applies. The final report.md must be with exactly five bullet points for the top features, one sentence of business reasoning each.
+
+**Always suspect the data before trusting it.** Explicitly check and report in eda\_summary.json: is price\_range balanced (expected roughly 500 per class)? Do px\_height or px\_width contain zeros — count them and flag as suspicious, since a real phone cannot have zero resolution? Are fc, pc and clock\_speed truly continuous, or are they discrete with half-steps like 0.5 and 1.5? Is any feature constant across all rows (zero variance, therefore useless)? Report every anomaly found in report.md as a separate short paragraph.
+
+GitHub Copilot: I’ll inspect the CSV and the required Python workflow first, then build a reproducible analysis that writes the charts, JSON checks, and five-point report into the workspace. I’m interpreting the malformed figure-size text “(12, 😍” as `(12, 8)`; I’ll keep that assumption explicit while validating the outputs.
+
+Read memory
+
+Read skill [python-fact-grounded-coding]()
+
+The Python skill calls for verifying runtime facts rather than assuming them. I’ll check the CSV’s actual schema and a small sample, plus any workspace-specific instructions, so the analysis follows the file that’s really here.
+
+Ran terminal command:  Get-Item train.csv | Select-Object Name,Length; python --version; python -c "import pandas, numpy, matplotlib, seaborn; print('pandas', pandas.__version__, 'numpy', numpy.__version__, 'matplotlib', matplotlib.__version__, 'seaborn', seaborn.__version__)"
+Completed with input:  Get-Item train.csv | Select-Object Name,Length; python --version; python -c "import pandas, numpy, matplotlib, seaborn; print('pandas', pandas.__version__, 'numpy', numpy.__version__, 'matplotlib', matplotlib.__version__, 'seaborn', seaborn.__version__)"
+
+Searched for files matching `**/{AGENTS.md,COPILOT_INSTRUCTIONS.md,README*,pyproject.toml,requirements*.txt,eda_analysis*}`, no matches
+
+Read [](), lines 1 to 8
+
+The CSV has the expected 21 columns, including `price_range`; the workspace Python is 3.9, but `seaborn` is not installed, so the required plotting stack isn’t ready yet. I’ll check which of the other allowed libraries are present and install only the missing allowed dependency before running the data-driven checks.
+
+Ran terminal command:  python -c "import pandas, numpy, matplotlib; print('pandas', pandas.__version__, 'numpy', numpy.__version__, 'matplotlib', matplotlib.__version__)"; wc -l train.csv; du -h train.csv
+
+No matches found. Your search pattern might be excluded completely by either the search.exclude settings or .*ignore files.
+If you believe that it should have results, you can check into the .*ignore files and the exclude setting (here are some excluded patterns for reference:[**/node_modules,**/bower_components,**/*.code-search]).
+Then if you want to include those files you can call the tool again by setting "includeIgnoredFiles" to true.
+
+
+
+The lightweight checks show 2,000 records and confirm pandas, NumPy, and matplotlib are available. I’m configuring the workspace interpreter now, then I’ll install seaborn and use a quick numeric audit to confirm the class balance, suspicious resolution zeros, and feature correlations before writing the analysis.
+
+Configuring a Python Environment
+Completed with input: {
+  "resourcePath": "c:\\temp"
+}
+
+Creating a Virtual Environment
+Completed with input: {
+  "resourcePath": "c:\\temp"
+}
+
+Installing seaborn in Python 3.10
+Completed with input: {
+  "packageList": [
+    "seaborn"
+  ],
+  "resourcePath": "c:\\temp"
+}
+
+Ran terminal command:  "C:/Users/Даниил/AppData/Local/Microsoft/WindowsApps/python3.10.exe" -c "import pandas as pd; import numpy as np; d=pd.read_csv('train.csv'); print(d.shape); print('price counts:', d.price_range.value_counts().sort_index().to_dict()); print('resolution zeros:', {c:int((d[c]==0).sum()) for c in ['px_height','px_width']}); print('missing:', int(d.isna().sum().sum()), 'duplicates:', int(d.duplicated().sum())); print('discrete candidates:', {c: sorted(d[c].dropna().unique().tolist())[:30] for c in ['fc','pc','clock_speed']}); print('constants:', d.columns[d.nunique(dropna=False)==1].tolist()); print('price correlations:', d.corr(numeric_only=True).price_range.drop('price_range').abs().sort_values(ascending=False).head(10).to_dict())"
+Completed with input:  "C:/Users/Даниил/AppData/Local/Microsoft/WindowsApps/python3.10.exe" -c "import pandas as pd; import numpy as np; d=pd.read_csv('train.csv'); print(d.shape); print('price counts:', d.price_range.value_counts().sort_index().to_dict()); print('resolution zeros:', {c:int((d[c]==0).sum()) for c in ['px_height','px_width']}); print('missing:', int(d.isna().sum().sum()), 'duplicates:', int(d.duplicated().sum())); print('discrete candidates:', {c: sorted(d[c].dropna().unique().tolist())[:30] for c in ['fc','pc','clock_speed']}); print('constants:', d.columns[d.nunique(dropna=False)==1].tolist()); print('price correlations:', d.corr(numeric_only=True).price_range.drop('price_range').abs().sort_values(ascending=False).head(10).to_dict())"
+
+The configured VS Code interpreter differs from the shell Python: it can launch, but it currently lacks pandas. I’ll inspect that interpreter’s package state and resolve the mismatch, then use one consistent environment for the audit and script run.
+
+Fetching Python environment information
+Completed with input: {
+  "resourcePath": "c:\\temp"
+}
+
+Ran terminal command:  python -c "import sys; print(sys.executable); import pandas, numpy, matplotlib; print(pandas.__version__, numpy.__version__, matplotlib.__version__)"; python -m pip --version; pwd; ls
+
+Ran terminal command:  python -m pip install seaborn
+
+Ran terminal command:  python -m pip install seaborn
+
+Seaborn is now installed in the shell interpreter that has access to `train.csv`; the workspace’s selected interpreter is a separate environment, so I’ll validate through that working shell runtime. The hypothesis is that this canonical dataset has nonuniform feature associations but is nearly balanced; the audit below will falsify that if class counts, zero-resolution counts, or correlation ranking disagree.
+
+Ran terminal command: import pandas as pd; d=pd.read_csv('train.csv'); print('shape',d.shape); print('price counts',d.price_range.value_counts().sort_index().to_dict()); print('resolution zeros',{c:int((d[c]==0).sum()) for c in ['px_height','px_width']}); print('missing',int(d.isna().sum().sum()),'duplicates',int(d.duplicated().sum())); print('candidate unique counts',{c:int(d[c].nunique()) for c in ['fc','pc','clock_speed']}); print('candidate half-step counts',{c:int(d[c].dropna().isin([0.5,1.5]).sum()) for c in ['fc','pc','clock_speed']}); print('constants',d.columns[d.nunique(dropna=False)==1].tolist()); print('abs corr',d.corr(numeric_only=True).price_range.drop('price_range').abs().sort_values(ascending=False).head(10).round(4).to_dict())
+
+The audit confirms the data are balanced (500 rows per class), with no missing values, duplicates, or constant columns; it found two zero `px_height` readings, and `clock_speed` is recorded at 26 levels including half-steps. RAM dominates the association ranking, followed by battery capacity and resolution; I’m now creating a script that computes every statistic and report item directly from the CSV, rather than hard-coding those findings.
+
+I’m adding `eda_analysis.py` now. It will create `output/` before reading/writing results, save the required figures at `(12, 8)` and 120 DPI, export overall and class-wise `describe()` tables, and generate the JSON and Markdown from measured values; the report will have exactly five feature bullets, with each detected data-quality issue in its own paragraph.
+
+Apply Patch
+
+Generating patch (315 lines) in []()
+
+
+```
+
+```
+
+
+Ran terminal command:  python eda_analysis.py
+
+The first end-to-end run completed without a Python exception. I’m checking the generated report and summary now, especially that the ranking is exactly five bullets, anomaly paragraphs are separated, and both PNGs meet the size limit.
+
+Checked [](), no problems found
+
+Read []()
+
+Read []()
+
+Read [](), lines 1 to 120
+
+The outputs contain the requested tables and exactly five ranked bullets, but review caught a wording bug: the script’s “half-step examples” included other decimal increments such as `0.6`. I’m narrowing that list to actual `.5` fractional levels and matching the required `plt.tight_layout()` call exactly, then I’ll rerun the analysis and confirm PNG sizes.
+
+Generating patch (15 lines) in []()
+
+
+```
+
+```
+
+
+Ran terminal command:  python eda_analysis.py
+
+Ran terminal command: import json, pathlib, matplotlib.image as mpimg; root=pathlib.Path('.'); summary=json.loads((root/'output/eda_summary.json').read_text()); report=(root/'report.md').read_text(); bullet_count=sum(line.startswith('- ') for line in report.splitlines()); pngs=[root/'output/corr.png',root/'output/boxplots.png']; print('report bullets:',bullet_count); print('price balance:',summary['price_range_balance']); print('resolution zeros:',summary['resolution_zero_counts']); print('granularity:',{k:{'unique_value_count':v['unique_value_count'],'integer_valued':v['integer_valued'],'half_step_observation_count':v['half_step_observation_count']} for k,v in summary['granularity_checks'].items()}); print('constant features:',summary['constant_features']); print('PNG checks:',[(p.name,p.stat().st_size,mpimg.imread(p).shape) for p in pngs]); assert bullet_count==5; assert all(p.stat().st_size <= 2*1024*1024 for p in pngs); assert len(summary['describe_by_price_range'])==20
+
+Checked [](), no problems found
+
+Read []()
+
+Implemented and ran `eda_analysis.py`. The analysis found balanced price classes (500 each), 2 suspicious zero values in `px_height`, no missing values, duplicates, or constant features, and discrete `fc`, `pc`, and `clock_speed` measurements.
+
+The report has exactly five feature bullets in `report.md`. Generated the requested charts, JSON summary, and class-wise descriptive statistics in `output`: both PNGs are under 2 MB.
+
+Made changes.
