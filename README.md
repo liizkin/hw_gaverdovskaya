@@ -24,7 +24,7 @@ Input data is located in `train.csv`; logs are in `logs.txt`.
 
 Output data is available in the `/output` directory:
 
-- [Boxplots of key features](output/boxplot.png)
+- [Boxplots of key features](output/boxplots.png)
 - [Correlation matrix](output/corr.png)
 - [Descriptive statistics for features](output/descriptive_stats.csv)
 - [Descriptive statistics for features by price_range](output/descriptive_stats_by_price_range.csv)
